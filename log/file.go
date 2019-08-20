@@ -30,7 +30,7 @@ type Logger struct {
 
 func init() {
 	logger = &Logger{
-			logPath: "/log",
+			logPath: "/Users/machao/goBase/src/log",
 			logName: "log",
 		}
 
