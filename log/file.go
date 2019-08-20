@@ -76,12 +76,12 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 
 	info := []string{
 		time.Now().Format("2006-01-02 15:04:05"),
-		string(level),
+		"[" + string(level) + "]",
 		fileName,
-		strconv.Itoa(line),
+		strconv.Itoa(line) + " line: ",
 		format,
 	}
-	content := strings.Join(info, " ")
+	content := "\n" + strings.Join(info, " ")
 
 	_, _ = fmt.Fprintf(l.file, content, args...)
 }
