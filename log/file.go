@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"runtime"
-	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 var logger *Logger
@@ -68,18 +65,8 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	_, fileName, line, ok := runtime.Caller(1)
-
-	if !ok {
-		//todo error 返回
-		fileName, line = "", 0
-	}
-
 	info := []string{
-		time.Now().Format("2006-01-02 15:04:05"),
 		"[" + string(level) + "]",
-		fileName,
-		strconv.Itoa(line) + " line: ",
 		format,
 	}
 	content := strings.Join(info, " ") + "\n"
