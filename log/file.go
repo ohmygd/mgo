@@ -67,7 +67,7 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	_, fileName, line, ok := runtime.Caller(0)
+	_, fileName, line, ok := runtime.Caller(1)
 
 	if !ok {
 		//todo error 返回
@@ -81,7 +81,7 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 		strconv.Itoa(line) + " line: ",
 		format,
 	}
-	content := "\n" + strings.Join(info, " ")
+	content := strings.Join(info, " ") + "\n"
 
 	_, _ = fmt.Fprintf(l.file, content, args...)
 }
