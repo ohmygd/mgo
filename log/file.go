@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"runtime"
 	"strconv"
@@ -83,7 +84,9 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 	}
 	content := strings.Join(info, " ") + "\n"
 
-	_, _ = fmt.Fprintf(l.file, content, args...)
+	dbgLogger := log.New(l.file, "", log.Llongfile | log.LstdFlags)
+
+	dbgLogger.Println(content)
 }
 
 func (l *Logger)Close() {
