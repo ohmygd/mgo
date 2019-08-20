@@ -30,7 +30,7 @@ type Logger struct {
 
 func init() {
 	logger = &Logger{
-			logPath: "./mLog",
+			logPath: "/mLog",
 			logName: "log",
 		}
 
