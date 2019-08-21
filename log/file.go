@@ -62,9 +62,6 @@ func Logf(level Level, format string, args ...interface{}) {
 }
 
 func (l *Logger)Log(level Level, format string, args ...interface{}) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
 	info := []string{
 		"[" + string(level) + "]",
 		format,
@@ -73,7 +70,10 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 
 	dbgLogger := log.New(l.file, "", log.Llongfile | log.LstdFlags)
 
-	dbgLogger.Println(content)
+	//dbgLogger.Println(content)
+
+	dbgLogger.Output(3, content)
+
 }
 
 func (l *Logger)Close() {
