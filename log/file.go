@@ -72,7 +72,7 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 
 	//dbgLogger.Println(content)
 
-	dbgLogger.Output(5, content)
+	dbgLogger.Output(4, content)
 
 }
 
