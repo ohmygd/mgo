@@ -2,6 +2,7 @@ package redis
 
 import (
 	"errors"
+	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"github.com/ohmygd/mgo/config"
 	"time"
@@ -66,6 +67,18 @@ func init() {
 		Dial: func() (redis.Conn ,error){     //要连接的redis数据库
 			return redis.Dial("tcp",host.(string) + ":" + port.(string))
 		},
+	}
+
+	// 授权验证
+	password := config.GetRedisMsg("password")
+	if password != nil {
+		c := pool.Get()
+		defer c.Close()
+
+		if _, err := c.Do("AUTH", password); err != nil {
+		   c.Close()
+		   panic(fmt.Sprintf("redis auth error. err: %s", err))
+		}
 	}
 }
 

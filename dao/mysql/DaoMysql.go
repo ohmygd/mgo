@@ -60,7 +60,14 @@ func getConn(maxOpenConns, maxIdleConns int) *gorm.DB {
 	db2.DB().SetMaxIdleConns(maxIdleConns)
 	db2.DB().SetConnMaxLifetime(time.Minute)
 	db2.SingularTable(true)
-	db2.LogMode(true)
+
+	env := config.GetConfigMsg("env")
+	logModel := false
+	if env == nil || env == "dev" || env == "test" {
+		logModel = true
+	}
+	db2.LogMode(logModel)
+
 
 	return db2
 }
