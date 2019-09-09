@@ -14,15 +14,14 @@ type DaoRedis struct {
 
 type GetType string
 
-
 const (
-	MaxIdleC = 10
-	MaxActiveC = 10
-	IdleTimeOutC = 300
-	GetTypeString GetType= "string"
-	GetTypeInt = "int"
-	GetTypeBool = "bool"
-	GetTypeByte = "byte"
+	MaxIdleC              = 10
+	MaxActiveC            = 10
+	IdleTimeOutC          = 300
+	GetTypeString GetType = "string"
+	GetTypeInt            = "int"
+	GetTypeBool           = "bool"
+	GetTypeByte           = "byte"
 )
 
 var pool *redis.Pool
@@ -52,7 +51,7 @@ func init() {
 
 	if idleTimeOut != nil {
 		idleTimeOutC = time.Duration(idleTimeOut.(float64))
-	}else {
+	} else {
 		idleTimeOutC = IdleTimeOutC
 	}
 
@@ -60,12 +59,12 @@ func init() {
 		panic("redis config lost")
 	}
 
-	pool = &redis.Pool{     //实例化一个连接池
-		MaxIdle:maxIdleC,    //最初的连接数量
-		MaxActive:maxActiveC,    //连接池最大连接数量,不确定可以用0（0表示自动定义），按需分配
-		IdleTimeout: idleTimeOutC,    //连接关闭时间
-		Dial: func() (redis.Conn ,error){     //要连接的redis数据库
-			return redis.Dial("tcp",host.(string) + ":" + port.(string))
+	pool = &redis.Pool{ //实例化一个连接池
+		MaxIdle:     maxIdleC,     //最初的连接数量
+		MaxActive:   maxActiveC,   //连接池最大连接数量,不确定可以用0（0表示自动定义），按需分配
+		IdleTimeout: idleTimeOutC, //连接关闭时间
+		Dial: func() (redis.Conn, error) { //要连接的redis数据库
+			return redis.Dial("tcp", host.(string)+":"+port.(string))
 		},
 	}
 
@@ -76,13 +75,13 @@ func init() {
 		defer c.Close()
 
 		if _, err := c.Do("AUTH", password); err != nil {
-		   c.Close()
-		   panic(fmt.Sprintf("redis auth error. err: %s", err))
+			c.Close()
+			panic(fmt.Sprintf("redis auth error. err: %s", err))
 		}
 	}
 }
 
-func (d *DaoRedis)BaseSet(c redis.Conn, key, value interface{}) (err error) {
+func (d *DaoRedis) BaseSet(c redis.Conn, key, value interface{}) (err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -93,7 +92,7 @@ func (d *DaoRedis)BaseSet(c redis.Conn, key, value interface{}) (err error) {
 	return
 }
 
-func (d *DaoRedis)BaseGet(c redis.Conn, key interface{}, getType GetType) (r interface{}, err error) {
+func (d *DaoRedis) BaseGet(c redis.Conn, key interface{}, getType GetType) (r interface{}, err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -113,7 +112,7 @@ func (d *DaoRedis)BaseGet(c redis.Conn, key interface{}, getType GetType) (r int
 	return nil, errors.New("getType error. not set")
 }
 
-func (d *DaoRedis)BaseSetEx(c redis.Conn, key interface{}, seconds int, value interface{}) (err error) {
+func (d *DaoRedis) BaseSetEx(c redis.Conn, key interface{}, seconds int, value interface{}) (err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -124,7 +123,7 @@ func (d *DaoRedis)BaseSetEx(c redis.Conn, key interface{}, seconds int, value in
 	return err
 }
 
-func (d *DaoRedis)BaseDel(c redis.Conn, key interface{}) (err error) {
+func (d *DaoRedis) BaseDel(c redis.Conn, key interface{}) (err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -135,7 +134,7 @@ func (d *DaoRedis)BaseDel(c redis.Conn, key interface{}) (err error) {
 	return err
 }
 
-func (d *DaoRedis)BaseMSet(c redis.Conn, p ...interface{}) (err error) {
+func (d *DaoRedis) BaseMSet(c redis.Conn, p ...interface{}) (err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -146,7 +145,7 @@ func (d *DaoRedis)BaseMSet(c redis.Conn, p ...interface{}) (err error) {
 	return
 }
 
-func (d *DaoRedis)BaseMGet(c redis.Conn, keys ...interface{}) (r []interface{}, err error) {
+func (d *DaoRedis) BaseMGet(c redis.Conn, keys ...interface{}) (r []interface{}, err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -160,7 +159,7 @@ func (d *DaoRedis)BaseMGet(c redis.Conn, keys ...interface{}) (r []interface{}, 
 	return
 }
 
-func (d *DaoRedis)Expire(c redis.Conn, key interface{}, second int) (err error) {
+func (d *DaoRedis) Expire(c redis.Conn, key interface{}, second int) (err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -171,7 +170,7 @@ func (d *DaoRedis)Expire(c redis.Conn, key interface{}, second int) (err error) 
 	return
 }
 
-func (d *DaoRedis)DecrBy(c redis.Conn, key interface{}, by int) (r int, err error) {
+func (d *DaoRedis) DecrBy(c redis.Conn, key interface{}, by int) (r int, err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()
@@ -185,7 +184,7 @@ func (d *DaoRedis)DecrBy(c redis.Conn, key interface{}, by int) (r int, err erro
 	return
 }
 
-func (d *DaoRedis)IncrBy(c redis.Conn, key interface{}, by int) (r int, err error) {
+func (d *DaoRedis) IncrBy(c redis.Conn, key interface{}, by int) (r int, err error) {
 	if c == nil {
 		c = pool.Get()
 		defer c.Close()

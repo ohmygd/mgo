@@ -14,23 +14,23 @@ type Level string
 
 const (
 	DebugLevel Level = "DEBUG"
-	InfoLevel  = "Info"
-	WarnLevel  = "Warn"
-	ErrorLevel  = "Error"
+	InfoLevel        = "Info"
+	WarnLevel        = "Warn"
+	ErrorLevel       = "Error"
 )
 
 type Logger struct {
-	mu sync.Mutex
+	mu      sync.Mutex
 	logPath string
 	logName string
-	file *os.File
+	file    *os.File
 }
 
 func init() {
 	logger = &Logger{
-			logPath: "/Users/machao/goBase/src/log",
-			logName: "log",
-		}
+		logPath: "/Users/machao/goBase/src/log",
+		logName: "log",
+	}
 
 	filename := fmt.Sprintf("%s/%s.log", logger.logPath, logger.logName)
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0755) // os.O_CREATE 创建文件 os.O_APPEND 追加写入 os.O_WRONLY 只写操作
@@ -61,14 +61,14 @@ func Logf(level Level, format string, args ...interface{}) {
 	logger.Log(level, format, args...)
 }
 
-func (l *Logger)Log(level Level, format string, args ...interface{}) {
+func (l *Logger) Log(level Level, format string, args ...interface{}) {
 	info := []string{
 		"[" + string(level) + "]",
 		format,
 	}
 	content := strings.Join(info, " ") + "\n"
 
-	dbgLogger := log.New(l.file, "", log.Llongfile | log.LstdFlags)
+	dbgLogger := log.New(l.file, "", log.Llongfile|log.LstdFlags)
 
 	//dbgLogger.Println(content)
 
@@ -76,8 +76,7 @@ func (l *Logger)Log(level Level, format string, args ...interface{}) {
 
 }
 
-func (l *Logger)Close() {
+func (l *Logger) Close() {
 	// todo 暂无用
 	l.file.Close()
 }
-

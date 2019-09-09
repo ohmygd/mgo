@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	allC = map[string]map[string]interface{}{};
+	allC     = map[string]map[string]interface{}{};
 	etcdName string
 )
 
@@ -118,7 +118,6 @@ func getConf() (res []string, cf []string) {
 		cf = append(cf, v.(string))
 	}
 
-
 	return
 }
 
@@ -137,4 +136,8 @@ func GetRedisMsg(key string) interface{} {
 
 func GetConfigMsg(key string) interface{} {
 	return allC["config"][key]
+}
+
+func GetHttpMsg(key string) interface{} {
+	return allC["http"][key]
 }

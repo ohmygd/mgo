@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	maxIdleConnsC int= 20
-	maxOpenConnsC = 20
+	maxIdleConnsC int = 20
+	maxOpenConnsC     = 20
 )
 
 func init() {
@@ -33,7 +33,7 @@ type DaoMysql struct {
 	InnerDb *gorm.DB
 }
 
-func (d *DaoMysql)GetConns() *gorm.DB {
+func (d *DaoMysql) GetConns() *gorm.DB {
 	if d.InnerDb != nil {
 		return d.InnerDb
 	}
@@ -67,7 +67,6 @@ func getConn(maxOpenConns, maxIdleConns int) *gorm.DB {
 		logModel = true
 	}
 	db2.LogMode(logModel)
-
 
 	return db2
 }

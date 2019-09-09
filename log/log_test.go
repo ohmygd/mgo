@@ -7,14 +7,14 @@ import (
 
 type Info1 struct {
 	Name string
-	Age int
+	Age  int
 }
 
-func (p *Info1)GetName() string {
+func (p *Info1) GetName() string {
 	return p.Name
 }
 
-func (p Info1)GetAge() int {
+func (p Info1) GetAge() int {
 	return p.Age
 }
 
@@ -29,7 +29,7 @@ type Mc1 struct {
 func TestLog(t *testing.T) {
 	a := &Mc1{&Info1{
 		"mc",
-				12,
+		12,
 	}}
 
 	fmt.Println(a.GetAge())

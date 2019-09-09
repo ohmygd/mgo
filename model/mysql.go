@@ -8,6 +8,6 @@ type Mysql struct {
 	UpdatedAt time.Time
 }
 
-type MysqlInterface interface{
+type MysqlInterface interface {
 	TableName() string
 }
