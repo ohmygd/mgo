@@ -123,7 +123,12 @@ func getConf() (res []string, cf []string) {
 
 func GetCodeMsg(code int) string {
 	cS := strconv.Itoa(code)
-	return allC["code"][cS].(string)
+
+	if allC["code"][cS] != nil {
+		return allC["code"][cS].(string)
+	}
+
+	return ""
 }
 
 func GetMysqlMsg(key string) interface{} {

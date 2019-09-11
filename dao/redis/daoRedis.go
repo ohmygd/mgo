@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"github.com/ohmygd/mgo/config"
+	"github.com/ohmygd/mgo/merror"
+	"github.com/ohmygd/mgo/pc"
 	"time"
 )
 
@@ -64,21 +66,26 @@ func init() {
 		MaxActive:   maxActiveC,   //连接池最大连接数量,不确定可以用0（0表示自动定义），按需分配
 		IdleTimeout: idleTimeOutC, //连接关闭时间
 		Dial: func() (redis.Conn, error) { //要连接的redis数据库
-			return redis.Dial("tcp", host.(string)+":"+port.(string))
+			c, err := redis.Dial("tcp", host.(string)+":"+port.(string))
+			if err != nil {
+				err = merror.New(pc.ErrorRedisCon)
+				return nil, err
+			}
+
+			// 授权验证
+			password := config.GetRedisMsg("password")
+			if password != nil {
+				if _, err := c.Do("AUTH", password); err != nil {
+					c.Close()
+					panic(fmt.Sprintf("redis auth error. err: %s", err))
+				}
+			}
+
+			return c, err
 		},
 	}
 
-	// 授权验证
-	password := config.GetRedisMsg("password")
-	if password != nil {
-		c := pool.Get()
-		defer c.Close()
 
-		if _, err := c.Do("AUTH", password); err != nil {
-			c.Close()
-			panic(fmt.Sprintf("redis auth error. err: %s", err))
-		}
-	}
 }
 
 func (d *DaoRedis) BaseSet(c redis.Conn, key, value interface{}) (err error) {

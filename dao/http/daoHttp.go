@@ -2,6 +2,8 @@ package http
 
 import (
 	"github.com/ohmygd/mgo/config"
+	"github.com/ohmygd/mgo/merror"
+	"github.com/ohmygd/mgo/pc"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -11,10 +13,10 @@ import (
 
 type DaoHttp struct {
 	Module  string
-	Timeout time.Duration
+	Timeout int
 }
 
-func (d *DaoHttp) SetTimeout(timeout time.Duration) {
+func (d *DaoHttp) SetTimeout(timeout int) {
 	d.Timeout = timeout
 }
 
@@ -26,7 +28,7 @@ func (d *DaoHttp) GetUriStr(uriStr string) (url string) {
 
 	info := httpInfo.(map[string]interface{})
 	url = info["url"].(string)
-	uri := info["uri."+uriStr].(string)
+	uri := info["uri"].(map[string]interface{})[uriStr].(string)
 
 	url += uri
 
@@ -35,7 +37,7 @@ func (d *DaoHttp) GetUriStr(uriStr string) (url string) {
 
 func (d *DaoHttp) Post(uriStr string, params map[string]string, headers map[string]string) (resp string, err error) {
 	client := &http.Client{
-		Timeout: d.Timeout,
+		Timeout: time.Duration(d.Timeout * int(time.Second)),
 	}
 
 	values := url.Values{}
@@ -45,12 +47,19 @@ func (d *DaoHttp) Post(uriStr string, params map[string]string, headers map[stri
 
 	p := strings.NewReader(values.Encode())
 
-	req, _ := http.NewRequest("POST", d.GetUriStr(uriStr), p)
+	moduleUrl := d.GetUriStr(uriStr)
+
+	req, _ := http.NewRequest("POST", moduleUrl, p)
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	addHeader(req, headers)
 
 	res, _ := client.Do(req)
+
+	if res == nil {
+		err = merror.New(pc.ErrorHttpGetPost)
+		return
+	}
 
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
@@ -62,7 +71,7 @@ func (d *DaoHttp) Post(uriStr string, params map[string]string, headers map[stri
 
 func (d *DaoHttp) Get(uriStr string, headers map[string]string) (resp string, err error) {
 	client := &http.Client{
-		Timeout: d.Timeout,
+		Timeout: time.Duration(d.Timeout * int(time.Second)),
 	}
 
 	req, _ := http.NewRequest("GET", d.GetUriStr(uriStr), nil)
@@ -70,6 +79,10 @@ func (d *DaoHttp) Get(uriStr string, headers map[string]string) (resp string, er
 	addHeader(req, headers)
 
 	res, _ := client.Do(req)
+	if res == nil {
+		err = merror.New(pc.ErrorHttpGetPost)
+		return
+	}
 
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
