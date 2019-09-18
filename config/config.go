@@ -8,11 +8,14 @@ import (
 	"go.etcd.io/etcd/clientv3"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 )
 
 var (
-	allC     = map[string]map[string]interface{}{};
+	// 并发安全map
+	allC sync.Map
+
 	etcdName string
 )
 
@@ -29,9 +32,33 @@ func init() {
 		return
 	}
 
-	defer cli.Close()
-
 	setConfig(cli, res)
+
+	watchConfig(cli, res)
+}
+
+func watchConfig(cli *clientv3.Client, res []string) {
+	for _, v := range res {
+		go watchConfigBase(cli, v)
+	}
+}
+
+func watchConfigBase(cli *clientv3.Client, key string) {
+	for {
+		rch := cli.Watch(context.Background(), getKey(key))
+		for v := range rch {
+			for _, ev := range v.Events {
+
+				var res map[string]interface{}
+				err := json.Unmarshal(ev.Kv.Value, &res)
+				if err == nil {
+					allC.Store(key, res)
+				} else {
+					log.Printf("watch etcd config json unmarshal error. err: %s", err.Error())
+				}
+			}
+		}
+	}
 }
 
 func setConfig(cli *clientv3.Client, res []string) {
@@ -62,7 +89,7 @@ func setConfigBase(cli *clientv3.Client, key string) {
 		}
 
 		// 设置c内容
-		allC[key] = c
+		allC.Store(key, c)
 	}
 }
 
@@ -124,25 +151,60 @@ func getConf() (res []string, cf []string) {
 func GetCodeMsg(code int) string {
 	cS := strconv.Itoa(code)
 
-	if allC["code"][cS] != nil {
-		return allC["code"][cS].(string)
+	codeInfo, ok := allC.Load("code")
+	if !ok {
+		return "unGet error"
+	}
+
+	res := codeInfo.(map[string]interface{})
+
+	if res[cS] != nil {
+		return res[cS].(string)
 	}
 
 	return ""
 }
 
 func GetMysqlMsg(key string) interface{} {
-	return allC["mysql"][key]
+	mysqlInfo, ok := allC.Load("mysql")
+	if !ok {
+		return nil
+	}
+
+	res := mysqlInfo.(map[string]interface{})
+
+	return res[key]
 }
 
 func GetRedisMsg(key string) interface{} {
-	return allC["redis"][key]
+	redisInfo, ok := allC.Load("redis")
+	if !ok {
+		return nil
+	}
+
+	res := redisInfo.(map[string]interface{})
+
+	return res[key]
 }
 
 func GetConfigMsg(key string) interface{} {
-	return allC["config"][key]
+	configInfo, ok := allC.Load("config")
+	if !ok {
+		return nil
+	}
+
+	res := configInfo.(map[string]interface{})
+
+	return res[key]
 }
 
 func GetHttpMsg(key string) interface{} {
-	return allC["http"][key]
+	httpInfo, ok := allC.Load("http")
+	if !ok {
+		return nil
+	}
+
+	res := httpInfo.(map[string]interface{})
+
+	return res[key]
 }
