@@ -2,13 +2,13 @@ package redis
 
 import (
 	"errors"
-	"time"
 	"github.com/garyburd/redigo/redis"
+	"time"
 )
 
 type Locker struct {
-	Key    string
-	Error  error
+	Key   string
+	Error error
 }
 
 // 获取锁, key尽量复杂, 才能减少出错的可能

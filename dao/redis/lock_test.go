@@ -7,7 +7,7 @@ import (
 )
 
 func TestTryLock(t *testing.T) {
-	for i:=0;i<50;i++ {
+	for i := 0; i < 50; i++ {
 		go func() {
 			//TryLock("mc", 2)
 			sum()

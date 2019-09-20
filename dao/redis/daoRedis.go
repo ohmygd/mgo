@@ -65,7 +65,7 @@ func init() {
 		MaxIdle:     maxIdleC,     //最初的连接数量
 		MaxActive:   maxActiveC,   //连接池最大连接数量,不确定可以用0（0表示自动定义），按需分配
 		IdleTimeout: idleTimeOutC, //连接关闭时间
-		Wait: true,
+		Wait:        true,
 		Dial: func() (redis.Conn, error) { //要连接的redis数据库
 			c, err := redis.Dial("tcp", host.(string)+":"+port.(string))
 			if err != nil {
@@ -85,7 +85,6 @@ func init() {
 			return c, err
 		},
 	}
-
 
 }
 

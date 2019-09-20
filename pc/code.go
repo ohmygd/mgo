@@ -14,7 +14,7 @@ const ErrorRedisDel = 10103   // redis del有误
 const ErrorRedisSetEx = 10104 // redis setEx有误
 const ErrorRedisDecr = 10105  // redis decr有误
 const ErrorRedisIncr = 10106  // redis incr有误
-const ErrorRedisCon = 10107  // redis 连接有误
+const ErrorRedisCon = 10107   // redis 连接有误
 
 const ErrorMysqlSelect = 10201 // mysql select有误
 const ErrorMysqlUpdate = 10202 // mysql update有误
