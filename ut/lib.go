@@ -4,6 +4,9 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
 )
 
 func Md5(str string) string {
@@ -29,4 +32,11 @@ func Base64Dec(str string) (res string, err error) {
 
 	res = string(decodeBytes)
 	return
+}
+
+func StrComplex(str string) string {
+	prefix1 := strconv.Itoa(rand.Intn(1000))
+	prefix2 := strconv.Itoa(rand.Intn(1000))
+
+	return prefix1 + prefix2 + str + strconv.FormatInt(time.Now().Unix(), 10)
 }
