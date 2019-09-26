@@ -22,3 +22,6 @@ const ErrorMysqlUpdate = 10202 // mysql update有误
 const ErrorMysqlCreate = 10203 // mysql create有误
 
 const ErrorHttpGetPost = 10301 // http 请求失败
+
+const ErrorGrpcGet = 10401 // grpc调用失败
+

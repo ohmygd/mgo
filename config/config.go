@@ -208,3 +208,14 @@ func GetHttpMsg(key string) interface{} {
 
 	return res[key]
 }
+
+func GetGrpcMsg(key string) interface{} {
+	grpcInfo, ok := allC.Load("grpc")
+	if !ok {
+		return nil
+	}
+
+	res := grpcInfo.(map[string]interface{})
+
+	return res[key]
+}

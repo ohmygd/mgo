@@ -27,6 +27,9 @@ func (d *DaoHttp) GetUriStr(uriStr string) (url string) {
 	}
 
 	info := httpInfo.(map[string]interface{})
+	if info["url"] == nil || info["uri"] == nil || info["uri"].(map[string]interface{})[uriStr] == nil {
+		panic("http config lost")
+	}
 	url = info["url"].(string)
 	uri := info["uri"].(map[string]interface{})[uriStr].(string)
 
@@ -69,12 +72,12 @@ func (d *DaoHttp) Post(uriStr string, params map[string]string, headers map[stri
 	return
 }
 
-func (d *DaoHttp) Get(uriStr string, headers map[string]string) (resp string, err error) {
+func (d *DaoHttp) Get(uriStr string, param string, headers map[string]string) (resp string, err error) {
 	client := &http.Client{
 		Timeout: time.Duration(d.Timeout * int(time.Second)),
 	}
 
-	req, _ := http.NewRequest("GET", d.GetUriStr(uriStr), nil)
+	req, _ := http.NewRequest("GET", d.GetUriStr(uriStr) + "?" + param, nil)
 
 	addHeader(req, headers)
 
