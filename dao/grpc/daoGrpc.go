@@ -6,8 +6,9 @@
 package grpc
 
 import (
-	"fmt"
 	"github.com/ohmygd/mgo/config"
+	"github.com/ohmygd/mgo/merror"
+	"github.com/ohmygd/mgo/pc"
 	"google.golang.org/grpc"
 )
 
@@ -17,14 +18,14 @@ type DaoGrpc struct {
 
 var con *grpc.ClientConn
 
-func (d *DaoGrpc) GetConn() *grpc.ClientConn {
+func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
 	if con != nil {
-		return con
+		return con, nil
 	}
 
 	info := config.GetGrpcMsg(d.Module)
 	if info == nil {
-		panic("grpc config lost.")
+		return nil, merror.NewWM(pc.ErrorGrpcConfig, "grpc config lost.")
 	}
 
 	infoMap := info.(map[string]interface{})
@@ -32,14 +33,14 @@ func (d *DaoGrpc) GetConn() *grpc.ClientConn {
 	port := infoMap["port"]
 
 	if host == nil || port == nil {
-		panic("grpc config host or port lost.")
+		return nil, merror.NewWM(pc.ErrorGrpcConfig, "grpc config lost.")
 	}
 
 	var err error
-	con, err = grpc.Dial(host.(string) + ":" + port.(string), grpc.WithInsecure())
+	con, err = grpc.Dial(host.(string)+":"+port.(string), grpc.WithInsecure())
 	if err != nil {
-		panic(fmt.Sprintf("did not connect: %v", err))
+		return nil, merror.NewWM(pc.ErrorGrpcConnect, err.Error())
 	}
 
-	return con
+	return con, nil
 }

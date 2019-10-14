@@ -14,7 +14,7 @@ func New(code int) *Merr {
 func NewWM(code int, msg string) *Merr {
 	return &Merr{
 		code: code,
-		msg:msg,
+		msg:  msg,
 	}
 }
 

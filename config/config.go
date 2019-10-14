@@ -219,3 +219,25 @@ func GetGrpcMsg(key string) interface{} {
 
 	return res[key]
 }
+
+func GetMongoMsg(key string) interface{} {
+	mongoInfo, ok := allC.Load("mongo")
+	if !ok {
+		return nil
+	}
+
+	res := mongoInfo.(map[string]interface{})
+
+	return res[key]
+}
+
+func GetNsqMsg(key string) interface{} {
+	nsqInfo, ok := allC.Load("nsq")
+	if !ok {
+		return nil
+	}
+
+	res := nsqInfo.(map[string]interface{})
+
+	return res[key]
+}

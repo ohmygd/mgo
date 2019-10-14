@@ -77,7 +77,7 @@ func (d *DaoHttp) Get(uriStr string, param string, headers map[string]string) (r
 		Timeout: time.Duration(d.Timeout * int(time.Second)),
 	}
 
-	req, _ := http.NewRequest("GET", d.GetUriStr(uriStr) + "?" + param, nil)
+	req, _ := http.NewRequest("GET", d.GetUriStr(uriStr)+"?"+param, nil)
 
 	addHeader(req, headers)
 
