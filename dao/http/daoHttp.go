@@ -81,7 +81,12 @@ func (d *DaoHttp) Get(uriStr string, param string, headers map[string]string) (r
 
 	addHeader(req, headers)
 
-	res, _ := client.Do(req)
+	res, err := client.Do(req)
+	if err != nil {
+		err = merror.NewWM(pc.ErrorHttpGetPost, err.Error())
+		return
+	}
+
 	if res == nil {
 		err = merror.New(pc.ErrorHttpGetPost)
 		return
