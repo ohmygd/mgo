@@ -88,6 +88,10 @@ func init() {
 
 }
 
+func Pool() *redis.Pool {
+	return pool
+}
+
 func (d *DaoRedis) BaseSet(c redis.Conn, key, value interface{}) (err error) {
 	if c == nil {
 		c = pool.Get()
