@@ -94,7 +94,7 @@ func setConfigBase(cli *clientv3.Client, key string) {
 }
 
 func getKey(key string) string {
-	return "/" + etcdName + "/" + key;
+	return "/" + etcdName + "/" + key
 }
 
 func getConf() (res []string, cf []string) {

@@ -19,7 +19,7 @@ type DaoGrpc struct {
 var con *grpc.ClientConn
 
 func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
-	if con != nil {
+	if con != nil && con.GetState().String() == "READY" {
 		return con, nil
 	}
 
