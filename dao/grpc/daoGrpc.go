@@ -10,17 +10,19 @@ import (
 	"github.com/ohmygd/mgo/merror"
 	"github.com/ohmygd/mgo/pc"
 	"google.golang.org/grpc"
+	"sync"
 )
 
 type DaoGrpc struct {
 	Module string
 }
 
-var con *grpc.ClientConn
+var cons map[string]*grpc.ClientConn
+var once sync.Once
 
 func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
-	if con != nil {
-		return con, nil
+	if cons != nil && cons[d.Module] != nil {
+		return cons[d.Module], nil
 	}
 
 	info := config.GetGrpcMsg(d.Module)
@@ -36,11 +38,18 @@ func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
 		return nil, merror.NewWM(pc.ErrorGrpcConfig, "grpc config lost.")
 	}
 
+	var con *grpc.ClientConn
 	var err error
 	con, err = grpc.Dial(host.(string)+":"+port.(string), grpc.WithInsecure())
 	if err != nil {
 		return nil, merror.NewWM(pc.ErrorGrpcConnect, err.Error())
 	}
+
+	once.Do(func() {
+		cons = make(map[string]*grpc.ClientConn, 0)
+	})
+
+	cons[d.Module] = con
 
 	return con, nil
 }
