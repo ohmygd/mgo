@@ -19,7 +19,7 @@ type DaoGrpc struct {
 var con *grpc.ClientConn
 
 func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
-	if con != nil && con.GetState().String() == "READY" {
+	if con != nil {
 		return con, nil
 	}
 
@@ -31,8 +31,6 @@ func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
 	infoMap := info.(map[string]interface{})
 	host := infoMap["host"]
 	port := infoMap["port"]
-
-	log.Println("module:" + d.Module + " host:" + host + ", port:" + port + "-----------")
 
 	if host == nil || port == nil {
 		return nil, merror.NewWM(pc.ErrorGrpcConfig, "grpc config lost.")
