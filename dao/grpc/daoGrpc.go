@@ -32,6 +32,8 @@ func (d *DaoGrpc) GetConn() (*grpc.ClientConn, error) {
 	host := infoMap["host"]
 	port := infoMap["port"]
 
+	log.Println("module:" + d.Module + " host:" + host + ", port:" + port + "-----------")
+
 	if host == nil || port == nil {
 		return nil, merror.NewWM(pc.ErrorGrpcConfig, "grpc config lost.")
 	}
