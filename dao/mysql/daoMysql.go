@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/ohmygd/mgo/config"
-	"sync"
 	"time"
 )
 
@@ -15,31 +14,6 @@ const (
 )
 
 func init() {
-
-}
-
-var (
-	Db    map[string]*gorm.DB
-	conMu sync.RWMutex
-	once  sync.Once
-)
-
-type DaoMysql struct {
-	InnerDb *gorm.DB
-	Db      string
-}
-
-func (d *DaoMysql) GetConns() *gorm.DB {
-	if d.InnerDb != nil {
-		return d.InnerDb
-	}
-
-	conMu.RLock()
-	if db, ok := Db[d.Db]; ok && db != nil {
-		return db
-	}
-	conMu.RUnlock()
-
 	maxOpenConns := maxOpenConnsC
 	if config.GetMysqlMsg("maxOpenConns") != nil {
 		maxOpenConns = int(config.GetMysqlMsg("maxOpenConns").(float64))
@@ -50,16 +24,23 @@ func (d *DaoMysql) GetConns() *gorm.DB {
 		maxIdleConns = int(config.GetMysqlMsg("maxIdleConns").(float64))
 	}
 
-	db := getConn(maxOpenConns, maxIdleConns)
-	once.Do(func() {
-		Db = make(map[string]*gorm.DB, 0)
-	})
+	Db = getConn(maxOpenConns, maxIdleConns)
+}
 
-	conMu.Lock()
-	Db[d.Db] = db
-	conMu.Unlock()
+var (
+	Db *gorm.DB
+)
 
-	return db
+type DaoMysql struct {
+	InnerDb *gorm.DB
+}
+
+func (d *DaoMysql) GetConns() *gorm.DB {
+	if d.InnerDb != nil {
+		return d.InnerDb
+	}
+
+	return Db
 }
 
 func getConn(maxOpenConns, maxIdleConns int) *gorm.DB {
@@ -81,7 +62,7 @@ func getConn(maxOpenConns, maxIdleConns int) *gorm.DB {
 	db2.DB().SetMaxIdleConns(maxIdleConns)
 	db2.DB().SetConnMaxLifetime(time.Minute)
 	// 全局禁用表名复数
-	db2.SingularTable(true) // 如果设置为true,`User`的默认表名为`user`,使用`TableName`设置的表名不受影响
+	db2.SingularTable(true)// 如果设置为true,`User`的默认表名为`user`,使用`TableName`设置的表名不受影响
 
 	env := config.GetConfigMsg("env")
 	logModel := false
