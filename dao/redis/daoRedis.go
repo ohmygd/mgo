@@ -165,7 +165,9 @@ func (d *DaoRedis) BaseMGet(c redis.Conn, keys ...interface{}) (r []interface{},
 	var res interface{}
 	res, err = c.Do("mget", keys...)
 
-	r = res.([]interface{})
+	if res != nil {
+		r = res.([]interface{})
+	}
 
 	return
 }
