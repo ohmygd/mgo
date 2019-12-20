@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"time"
 )
@@ -39,4 +40,32 @@ func StrComplex(str string) string {
 	prefix2 := strconv.Itoa(rand.Intn(1000))
 
 	return prefix1 + prefix2 + str + strconv.FormatInt(time.Now().Unix(), 10)
+}
+
+func IsMobile(mobile string) bool {
+	reg := `^1([38][0-9]|14[579]|5[^4]|16[6]|7[1-35-8]|9[189])\d{8}$`
+	rgx := regexp.MustCompile(reg)
+
+	return rgx.MatchString(mobile)
+}
+
+func RandStr(n int) string {
+	str := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	var res string
+	for i:=0;i<n;i++ {
+		rand.Seed(time.Now().UnixNano())
+		res += string(str[rand.Intn(len(str))])
+	}
+
+	return res
+}
+
+// 密码长度需不小于8位
+func PwdIsOk(pwd string) bool {
+	if len(pwd) < 8 {
+		return false
+	}
+
+	return true
 }

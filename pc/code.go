@@ -22,6 +22,7 @@ const ErrorRedisExpire = 10109  // redis 设置超时失败
 const ErrorMysqlSelect = 10201 // mysql select有误
 const ErrorMysqlUpdate = 10202 // mysql update有误
 const ErrorMysqlCreate = 10203 // mysql create有误
+const ErrorMysqlDelete = 10204 // mysql delete有误
 
 const ErrorHttpGetPost = 10301 // http 请求失败
 

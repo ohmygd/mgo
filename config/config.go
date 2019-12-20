@@ -162,7 +162,7 @@ func GetCodeMsg(code int) string {
 		return res[cS].(string)
 	}
 
-	return ""
+	return "unSet error"
 }
 
 func GetMysqlMsg(key string) interface{} {
