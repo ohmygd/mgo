@@ -77,3 +77,7 @@ func Hello() {
 func Hello2() {
 	fmt.Println("hello222--------")
 }
+
+func Hello23() {
+	fmt.Println("hello2223--------")
+}
