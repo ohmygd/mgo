@@ -69,3 +69,7 @@ func PwdIsOk(pwd string) bool {
 
 	return true
 }
+
+func Hello() {
+	fmt.Println("hello--------")
+}
